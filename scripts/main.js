@@ -33,6 +33,14 @@ function deleteBookByTitle(title) {
   displayLibrary();
 }
 
+function toggleReadFlag(title) {
+  myLibrary.forEach((book) => {
+    if (book.title === title) {
+      book.read = !book.read;
+    }
+  });
+}
+
 function displayLibrary() {
   const library = document.createElement("div");
   library.className = "row row-cols-4 g-5";
@@ -58,15 +66,20 @@ function displayLibrary() {
     cardAuthor.textContent = book.author;
     const cardPages = document.createElement("p");
     cardPages.textContent = book.pages + " pages";
-    const cardRead = document.createElement("p");
-    cardRead.className = "d-flex align-items-center";
-    cardRead.textContent = "Has been read: ";
-    const readIcon = document.createElement("i");
-    readIcon.className = book.read
-      ? "bi bi-check text-success"
-      : "bi bi-x text-danger";
-    readIcon.style.fontSize = "2rem";
-    cardRead.appendChild(readIcon);
+    const cardRead = document.createElement("div");
+    cardRead.className = "form-check";
+    const readLabel = document.createElement("label");
+    readLabel.className = "form-check-label";
+    readLabel.htmlFor = book.title + "read-flag";
+    readLabel.textContent = "Has been read:";
+    const readFlag = document.createElement("input");
+    readFlag.id = book.title + "read-flag";
+    readFlag.dataset.title = book.title;
+    readFlag.type = "checkbox";
+    readFlag.className = "form-check-input";
+    readFlag.defaultChecked = book.read;
+    cardRead.appendChild(readLabel);
+    cardRead.appendChild(readFlag);
 
     bookElementHeader.appendChild(cardTitle);
     bookElementHeader.appendChild(deleteCard);
@@ -108,5 +121,8 @@ const addBookButton = document
 document.addEventListener("click", (event) => {
   if (event.target.matches(".btn-close")) {
     deleteBookByTitle(event.target.dataset.title);
+  }
+  if (event.target.matches(".form-check-input")) {
+    toggleReadFlag(event.target.dataset.title);
   }
 });
